@@ -1,0 +1,142 @@
+# Paper config (KV-streams, TextWorld). __TEXTWORLD_DATASET__ = path to
+# textworld_all4_total60000_train59744_eval256_seed20260719 (see reproducing.md).
+max_steps = 500
+seq_len = 32768
+output_dir = "outputs/textworld/full_context"
+clean_output_dir = false
+
+[ckpt]
+interval = 10
+resume_step = -1
+keep_last = 2
+
+[deployment]
+type = "single_node"
+gpus_per_node = 8
+num_train_gpus = 4
+num_infer_gpus = 4
+
+[weight_broadcast]
+type = "nccl"
+port = 29521
+
+[model]
+name = "Qwen/Qwen3-4B-Instruct-2507"
+
+[wandb]
+project = "textworld-eviction-race"
+name = "fullctx-dp4-c48-s32k-lr1e6-bs512-0813"
+id = "fullctx-dp4-c48-s32k-lr1e6-bs512-0813"
+group = "kve-vs-fullctx-bs512-0729"
+offline = false
+shared = true
+
+[trainer]
+dist_timeout_seconds = 7200
+max_async_level = 1
+
+[trainer.model]
+name = "Qwen/Qwen3-4B-Instruct-2507"
+impl = "hf"
+attn = "flex_attention"
+ac = { mode = "full", freq = 1 }
+fsdp_cpu_offload = false
+optim_cpu_offload = false
+reshard_after_forward = true
+optimization_dtype = "float32"
+reduce_dtype = "bfloat16"
+fused_lm_head_token_chunk_size = "auto"
+
+[trainer.data]
+micro_batch_stack_size = 1
+
+[trainer.ckpt]
+interval = 10
+resume_step = -1
+keep_last = 2
+skip_gather_master_weights = false
+weights_only = false
+
+[trainer.loss]
+kl_tau = 0.0
+
+[trainer.optim]
+lr = 1e-6
+weight_decay = 0.01
+betas1 = 0.9
+betas2 = 0.9
+max_norm = 1.0
+
+[orchestrator]
+batch_size = 512
+rollouts_per_example = 8
+# 48 GLOBAL = 12 concurrent/rank x 4 inference DP ranks.
+max_inflight_rollouts = 48
+max_rollout_reschedules = 3
+max_off_policy_steps = 3
+use_token_client = true
+
+[orchestrator.compaction_padding]
+enabled = true
+count_padding_toward_sequence_limit = false
+max_padding_tokens = 12000
+phase4_enabled = true
+block_size = 16
+log_evicted_text = false
+phase4_weight_sync_strategy = "preserve_kv"
+
+[orchestrator.client]
+base_url = ["http://localhost:8100/v1"]
+dp_rank_count = 4
+
+[orchestrator.train.sampling]
+max_completion_tokens = 1024
+temperature = 1.0
+
+[[orchestrator.train.env]]
+id = "textworld-env"
+num_workers = 8
+args = { dataset_path = "__TEXTWORLD_DATASET__", max_episode_steps = 200, num_train_examples = 59744, num_eval_examples = 256, seed = 42, include_initial_obs_in_system = true, system_prompt_variant = "all-games" }
+
+[orchestrator.eval]
+interval = 15
+num_examples = 256
+rollouts_per_example = 1
+max_concurrent = 48
+skip_eval_on_resume = false
+cancel_inflight_rollouts_on_eval = false
+eval_base_model = false
+
+[orchestrator.eval.sampling]
+max_completion_tokens = 1024
+temperature = 1.0
+
+[[orchestrator.eval.env]]
+id = "textworld-env"
+num_workers = 4
+args = { dataset_path = "__TEXTWORLD_DATASET__", max_episode_steps = 200, num_train_examples = 59744, num_eval_examples = 256, seed = 42, include_initial_obs_in_system = true, system_prompt_variant = "all-games" }
+
+[inference]
+seed = 0
+enable_prefix_caching = true
+gpu_memory_utilization = 0.82
+api_server_count = 4
+data_parallel_size_local = 4
+data_parallel_rpc_port = 13355
+
+[inference.server]
+host = "0.0.0.0"
+port = 8100
+
+[inference.model]
+name = "Qwen/Qwen3-4B-Instruct-2507"
+max_model_len = 32768
+enforce_eager = false
+
+[inference.parallel]
+dp = 4
+tp = 1
+
+[inference.vllm_extra]
+block_size = 16
+async_scheduling = false

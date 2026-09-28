@@ -1,0 +1,8 @@
+[submodule "vllm"]
+	path = vllm
+	url = https://github.com/Emilianopp/kv-streams-vllm.git
+	branch = main
+[submodule "prime-rl"]
+	path = prime-rl
+	url = https://github.com/Emilianopp/kv-streams-prime-rl.git
+	branch = main

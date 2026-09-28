@@ -1,0 +1,118 @@
+"""JAX/MJX GPU-first scaffold for continual deviation experiments."""
+
+from .config import (
+    ACPQNConfig,
+    AlgorithmConfig,
+    BenchmarkConfig,
+    CLEARConfig,
+    CorrectionConfig,
+    OnlineEWCConfig,
+    PPOConfig,
+    PolicyConsolidationConfig,
+    ProjectConfig,
+    RandomPolicyConfig,
+    RepresentationConfig,
+    RuntimeConfig,
+    VariationBudgetConfig,
+    load_project_config,
+)
+from .benchmarks import (
+    BenchmarkSpec,
+    algorithm_compatibility,
+    benchmark_defaults,
+    get_benchmark_spec,
+)
+from .ac_pqn import (
+    ACPQNCorrectionStats,
+    ac_pqn_actor_loss,
+    ac_pqn_td_target,
+    corrected_ac_pqn_actor_loss,
+    deterministic_action_distance,
+)
+from .continual_baselines import (
+    CLEARStats,
+    OnlineEWCStats,
+    PolicyConsolidationStats,
+    baseline_name,
+    clear_loss,
+    online_ewc_penalty,
+    policy_consolidation_penalty,
+)
+from .mjx_env import (
+    ContinuingSwimmerFns,
+    EnvState,
+    build_continuing_swimmer,
+    default_swimmer_mjcf_path,
+)
+from .representation import cosine_drift, linear_cka, ridge_probe_r2
+from .random_policy import RandomPolicyStats, sample_random_actions
+from .runtime import (
+    configure_runtime_environment,
+    device_summary,
+    install_hint,
+    recommended_xla_flags,
+)
+from .update import corrected_policy_loss, positive_regret, select_reference_index
+from .variation_budget import (
+    VariationBudgetStats,
+    categorical_total_variation,
+    deterministic_action_variation,
+    gaussian_pinsker_tv_proxy,
+    reward_variation,
+    update_variation_budget,
+)
+
+__all__ = [
+    "ACPQNConfig",
+    "ACPQNCorrectionStats",
+    "AlgorithmConfig",
+    "BenchmarkSpec",
+    "BenchmarkConfig",
+    "CLEARConfig",
+    "CLEARStats",
+    "ContinuingSwimmerFns",
+    "CorrectionConfig",
+    "EnvState",
+    "OnlineEWCConfig",
+    "OnlineEWCStats",
+    "PPOConfig",
+    "PolicyConsolidationConfig",
+    "PolicyConsolidationStats",
+    "ProjectConfig",
+    "RandomPolicyConfig",
+    "RandomPolicyStats",
+    "RepresentationConfig",
+    "RuntimeConfig",
+    "VariationBudgetConfig",
+    "ac_pqn_actor_loss",
+    "ac_pqn_td_target",
+    "algorithm_compatibility",
+    "baseline_name",
+    "benchmark_defaults",
+    "build_continuing_swimmer",
+    "clear_loss",
+    "configure_runtime_environment",
+    "corrected_ac_pqn_actor_loss",
+    "corrected_policy_loss",
+    "cosine_drift",
+    "default_swimmer_mjcf_path",
+    "deterministic_action_distance",
+    "device_summary",
+    "install_hint",
+    "linear_cka",
+    "load_project_config",
+    "online_ewc_penalty",
+    "positive_regret",
+    "policy_consolidation_penalty",
+    "recommended_xla_flags",
+    "ridge_probe_r2",
+    "sample_random_actions",
+    "select_reference_index",
+    "VariationBudgetStats",
+    "categorical_total_variation",
+    "deterministic_action_variation",
+    "gaussian_pinsker_tv_proxy",
+    "get_benchmark_spec",
+    "reward_variation",
+    "update_variation_budget",
+]

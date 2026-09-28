@@ -1,0 +1,22 @@
+[project]
+name = "textworld-env"
+version = "0.1.0"
+description = "TextWorld interactive-fiction environment (cooking) for kv-eviction multi-turn RL training"
+requires-python = ">=3.12"
+dependencies = [
+    "verifiers>=0.1.9",
+    "textworld>=1.6.0",
+    "datasets>=2.14",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = [
+    "textworld_env.py",
+    "generate_dataset.py",
+    "pyproject.toml",
+    "README.md",
+]

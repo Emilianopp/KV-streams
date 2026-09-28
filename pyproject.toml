@@ -1,0 +1,36 @@
+[project]
+name = "kv-eviction"
+version = "0.1.0"
+description = "Native vLLM KV cache compaction for RL training"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+airs-bench = [
+  "datasets>=3.6.0,<5.0.0",
+  "numpy>=1.26.0",
+  "pandas>=2.0.0",
+  "PyYAML>=6.0.0",
+  "scipy>=1.11.0",
+  "torchmetrics>=1.0.0",
+  "verifiers>=0.1.0",
+  "airsbench @ git+https://github.com/facebookresearch/airs-bench.git",
+]
+balrog-crafter = [
+  "datasets>=2.19.0",
+  "verifiers>=0.1.0",
+  "Pillow>=10.0.0",
+  "balrog @ git+https://github.com/balrog-ai/BALROG.git",
+]
+reasoning-rag = [
+  "datasets>=3.6.0,<5.0.0",
+  "transformers>=4.51.0",
+  "verifiers>=0.1.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
